@@ -7,10 +7,12 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let filepath = config.filepath.clone();
     let flag = config.flag.clone();
 
-    if action == "-df".to_string() {
+    if action.contains("-df") {
         delete_file(filepath);
-    } else if action == "-dd" {
-        delete_directory(filepath);
+    } else if action.contains("-dd") {
+        delete_directory(filepath, flag);
+    } else if action.contains("-dc") {
+        create_directory(filepath);
     }
 
     Ok(())
@@ -21,9 +23,19 @@ fn delete_file(filepath:String) {
     let delete = fs::remove_file(filepath);
 }
 
-fn delete_directory(filepath:String) {
-    let delete = fs::remove_dir(filepath);
+fn delete_directory(filepath:String, flag: String) {
+    if flag.contains("all"){
+        let delete = fs::remove_dir_all(filepath);
+    } else {
+        let delete = fs::remove_dir(filepath);
+    }
 }
+
+fn create_directory(filepath:String) {
+    let create = fs::create_dir(filepath);
+}
+
+
 
 pub struct Config {
     action: String,
@@ -33,7 +45,7 @@ pub struct Config {
 
 impl Config {
     pub fn build(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() > 4{
+        if args.len() < 3{
             return Err("Not Enough arguments");
         }
 
