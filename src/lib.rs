@@ -7,12 +7,14 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let filepath = config.filepath.clone();
     let flag = config.flag.clone();
 
-    if action.contains("-df") {
+    if action.contains("-delfile") {
         delete_file(filepath);
-    } else if action.contains("-dd") {
+    } else if action.contains("-deldir") {
         delete_directory(filepath, flag);
-    } else if action.contains("-dc") {
+    } else if action.contains("-makedir") {
         create_directory(filepath);
+    } else if action.contains("-makefile") {
+        create_file(filepath);
     }
 
     Ok(())
@@ -29,6 +31,10 @@ fn delete_directory(filepath:String, flag: String) {
     } else {
         let delete = fs::remove_dir(filepath);
     }
+}
+
+fn create_file(filepath:String) {
+    let create = fs::create_dir_all(filepath);
 }
 
 fn create_directory(filepath:String) {
