@@ -7,25 +7,25 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let filepath = config.filepath.clone();
     let flag = config.flag.clone();
 
-    if action.contains("-delfile") {
-        delete_file(filepath);
-    } else if action.contains("-deldir") {
-        delete_directory(filepath, flag);
-    } else if action.contains("-makedir") {
-        create_directory(filepath);
-    } else if action.contains("-makefile") {
-        create_file(filepath);
-    }
+    match action.as_str() {
+        "-delfile" => delete_file(&filepath),
+        "-deldir" => delete_directory(&filepath, flag),
+        "-makedir" => create_directory(&filepath),
+        "-makefile" => create_file(&filepath),
+        _ => {
+            panic!("Error! No argument recognized");
+        }
+    };
 
     Ok(())
 }
 
 
-fn delete_file(filepath:String) {
+fn delete_file(filepath: &String) {
     let delete = fs::remove_file(filepath);
 }
 
-fn delete_directory(filepath:String, flag: String) {
+fn delete_directory(filepath: &String, flag: String) {
     if flag.contains("all"){
         let delete = fs::remove_dir_all(filepath);
     } else {
@@ -33,11 +33,11 @@ fn delete_directory(filepath:String, flag: String) {
     }
 }
 
-fn create_file(filepath:String) {
-    let create = fs::create_dir_all(filepath);
+fn create_file(filepath: &String) {
+    let create = fs::File::create_new(filepath);
 }
 
-fn create_directory(filepath:String) {
+fn create_directory(filepath: &String) {
     let create = fs::create_dir(filepath);
 }
 
