@@ -8,10 +8,10 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let flag = config.flag.clone();
 
     match action.as_str() {
-        "-delfile" => delete_file(&filepath),
-        "-deldir" => delete_directory(&filepath, flag),
-        "-makedir" => create_directory(&filepath),
-        "-makefile" => create_file(&filepath),
+        "-rmfile" => delete_file(&filepath),
+        "-rmdir" => delete_directory(&filepath, flag),
+        "-mkdir" => create_directory(&filepath),
+        "-mkfile" => create_file(&filepath),
         _ => {
             panic!("Error! No argument recognized");
         }
@@ -20,28 +20,32 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-
 fn delete_file(filepath: &String) {
-    let delete = fs::remove_file(filepath);
+    fs::remove_file(filepath);
 }
 
 fn delete_directory(filepath: &String, flag: String) {
     if flag.contains("all"){
-        let delete = fs::remove_dir_all(filepath);
+        fs::remove_dir_all(filepath);
     } else {
-        let delete = fs::remove_dir(filepath);
+        fs::remove_dir(filepath);
     }
+
+    match flag.as_str() {
+        "all" => fs::remove_dir_all(filepath),
+        _ => { 
+            fs::remove_dir(filepath)
+        }
+    };
 }
 
 fn create_file(filepath: &String) {
-    let create = fs::File::create_new(filepath);
+    fs::File::create_new(filepath);
 }
 
 fn create_directory(filepath: &String) {
-    let create = fs::create_dir(filepath);
+    fs::create_dir(filepath);
 }
-
-
 
 pub struct Config {
     action: String,
@@ -51,7 +55,7 @@ pub struct Config {
 
 impl Config {
     pub fn build(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3{
+        if args.len() < 2{
             return Err("Not Enough arguments");
         }
 
