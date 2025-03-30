@@ -5,7 +5,7 @@ use cclit::Config;
 fn main() {
     let args: Vec<String> = env::args().collect();
     let config = Config::build(&args).unwrap_or_else(|err| {
-        print!("Problem parsing arguments");
+        print!("Problem parsing arguments: {}",err);
         process::exit(1);
     });
 
